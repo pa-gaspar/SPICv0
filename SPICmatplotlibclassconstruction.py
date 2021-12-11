@@ -86,7 +86,7 @@ class PlotGraph(FigureCanvas):
         self.axReset = [0.85, 0.8, 0.1, 0.075]
         self.axSalvar = [0.85, 0.7, 0.1, 0.075]
         
-        
+    '''      
     def dadosGrafico(self,endereco):
         with open(endereco, newline='') as csvfile:
             #para csv gerado no SPARKvue
@@ -120,6 +120,57 @@ class PlotGraph(FigureCanvas):
         x = np.asarray(range(len(y)))
         
         return [x,y]
+'''    
+                
+    def dadosGrafico(self,endereco):
+        with open(endereco, newline='') as csvfile:
+            #para csv gerado no SPARKvue
+            #-----
+            #faz a leitura do arquivo CSV gerado pelo SPARKvue
+            self.auxReader = csv.reader(csvfile, delimiter=';', quotechar='|')
+            #-----
+            
+            #converte objeto para uma lista de lista com três strings 
+            self.testData = list(self.auxReader)
+            #exclui o primeiro item da lista, pois é referente ao título das colunas    
+        del self.testData[0]         
+        #transforma testData em um vetor numpy 
+        self.testData = np.asarray(self.testData)
+        #mantém apenas a coluna de número 2, referente aos valores de pressão 
+        try:
+            self.testData = self.testData[:,2]
+        except:
+            with open(endereco, newline='') as csvfile:
+                #para csv gerado no SPARKvue
+                #-----
+                #faz a leitura do arquivo CSV gerado pelo SPARKvue
+                self.auxReader = csv.reader(csvfile, delimiter=',', quotechar='|')
+                #-----
+            
+                #converte objeto para uma lista de lista com três strings 
+                self.testData = list(self.auxReader)
+            #exclui o primeiro item da lista, pois é referente ao título das colunas    
+            del self.testData[0]    
+            self.testData = np.asarray(self.testData)
+            self.testData = self.testData[:,2]
+        
+        #um for percorrendo a lista testData
+        for i in range(len(self.testData)):
+            #troca a vírgula, por ponto, então converte a string em um float e multiplica por mil, transformando de kPA para PA
+            self.testData[i] = np.float64(self.testData[i].replace(',','.'))*1000
+        
+        #transforma testData de uma matriz de strings em uma matriz de floats, 
+        self.testData = self.testData.astype(np.float)
+        
+        #-----
+        
+        #y recebe os valores de pressão
+        y = self.testData
+        #x recebe série de valores de 0 até o número total de amostras em y
+        x = np.asarray(range(len(y)))
+        
+        return [x,y]
+ 
     
     def plotar(self,e=threading.Event):
         
