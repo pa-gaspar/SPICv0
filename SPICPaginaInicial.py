@@ -244,12 +244,17 @@ class Ui_SPICPaginaPrincipal(object):
         self.listaDensidades = []
         for i in range(len(self.listaMedias)):
             if self.listaMassa[i] != 0:
-                self.listaDensidades.append(self.listaMedias[i]/self.listaMassa[i])
+                self.listaDensidades.append(self.listaMassa[i]/self.listaMedias[i])
             else:
                 self.listaDensidades.append("0")
         with open(self.valorPasta.text() +'/'+ self.valorNome.text()+"Densidade.csv",mode='w') as csvFile:
             writer = csv.writer(csvFile, delimiter=',')
             for i in self.listaDensidades:
+                writer.writerow([i])
+            csvFile.close()
+        with open(self.valorPasta.text() +'/'+ self.valorNome.text()+"VolumesOuFatores.csv",mode='w') as csvFile:
+            writer = csv.writer(csvFile, delimiter=',')
+            for i in self.listaMedias:
                 writer.writerow([i])
             csvFile.close()
                 
